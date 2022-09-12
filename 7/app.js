@@ -35,25 +35,42 @@ const { text } = require('stream/consumers');
 
 //readline
 const readline = require('readline');
+const { json } = require('node:stream/consumers');
+
 const rl = readline.createInterface({
     input :process.stdin,
     output: process.stdout,
 });
 
+//membuat folder contact jika belum ada
+const dirPath = "./contact";
+if (!fs.existsSync(dirPath)) {
+    fs.mkdirSync(dirPath);
+}
+
+//membuat file contact json jika belum ada
+const filePath = "contact/contact.json";
+if (!fs.existsSync(filePath)) {
+    // fs.writeFileSync(dirPath, '[]', 'utf-8');
+    fs.writeFileSync(filePath,'[]','utf8');
+}
+
 rl.question('sape lu?' , (nama) =>{
-    rl.question('nomer hp ?' , (nomer) =>{
-        console.log(`oalahh ${nomer} `);
-        console.log(`oalahh ${nama} `);
-        fs.writeFile('contact/contact.json', `[{"nama": "${nama}","nomer": ${nomer}}]` , (err) => {
-            if (err){
-                fs.mkdirSync('contact', { recursive: true });
-                fs.writeFile('contact/contact.json', `[{"nama": "${nama}","nomer": ${nomer}}]`, (err) => {});
-                rl.close();
-            }
-            
-            rl.close();
-        });
-        // rl.close();
+    rl.question('nomer hp ?' , (nomerHp) =>{
+       const contact = {nama : nama, nomerHp};
+        // console.log(`oalahh ${contact.nama} `);
+        // console.log(contact);
+        const file = fs.readFileSync('contact/contact.json','utf8');
+        // console.log(file);
+        const contacts = JSON.parse(file);
+        
+
+        contacts.push(contact);
+        console.info(JSON.stringify(contacts));
+        fs.writeFileSync('contact/contact.json',JSON.stringify(contacts));
+
+        
+        rl.close();
     })    
     
     // rl.close();
